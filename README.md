@@ -15,7 +15,7 @@ http://www.apache.org/licenses/LICENSE-2.0.html
 How it works
 =============
 
-- Put ESzabbix.py in some place in the zabbix node, for example /opt/zabbix/externalscripts/
+- Put ESzabbix.py in /opt/zabbix/externalscripts/ in the zabbix node
 
 - Put ESzabbix.userparm in the zabbix include parameters dir, in this case "/opt/zabbix/agent_include"
 
