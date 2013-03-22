@@ -12,6 +12,19 @@ These are made available by me under an Apache 2.0 license.
 http://www.apache.org/licenses/LICENSE-2.0.html
 
 
+How it works
+=============
+
+- Put ESzabbix.py in some place in the zabbix node, for example /opt/zabbix/externalscripts/
+
+- Put ESzabbix.userparm in the zabbix include parameters dir, in this case "/opt/zabbix/agent_include"
+
+- Import ESzabbix_templates.xml to zabbix server
+
+Specs
+=====
+
+
 The items here are for monitoring Elasticsearch (presumably for logstash).
 
 The template xml file actually contains three templates:
