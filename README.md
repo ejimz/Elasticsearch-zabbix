@@ -21,6 +21,8 @@ How it works
 
 - Import ESzabbix_templates.xml to zabbix server
 
+- requires 'pyes' to run this script
+
 Specs
 =====
 
