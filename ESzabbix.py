@@ -91,7 +91,6 @@ elif sys.argv[1] == 'service':
 else: # Not clusterwide, check the next arg
 
     nodestats = conn.cluster.node_stats()
-    print nodestats
     for nodename in nodestats['nodes']:
         if sys.argv[1] in nodestats['nodes'][nodename]['name']:
             if sys.argv[2] in indexingkeys:
