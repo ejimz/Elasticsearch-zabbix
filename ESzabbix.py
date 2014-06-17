@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
 # Created by Aaron Mildenstein on 19 SEP 2012
+# Switchted from pyes to Elasticsearch for better Health Monitoring by Marcel Alburg on 17 JUN 2014
 
-from pyes import *
+from elasticsearch import Elasticsearch
 import sys
 
 # Define the fail message
@@ -30,14 +31,14 @@ if len(sys.argv) < 3:
 
 # Try to establish a connection to elasticsearch
 try:
-    conn = ES('localhost:9200',timeout=25,default_indices=[''])
+    conn = Elasticsearch('localhost:9200')
 except Exception, e:
     zbx_fail()
 
 
 if sys.argv[1] == 'cluster':
     if sys.argv[2] in clusterkeys:
-        nodestats = conn.cluster_stats()
+        nodestats = conn.cluster.node_stats()
         subtotal = 0
         for nodename in nodestats['nodes']:
             if sys.argv[2] in indexingkeys:
@@ -90,8 +91,7 @@ elif sys.argv[1] == 'service':
 
 else: # Not clusterwide, check the next arg
 
-    nodestats = conn.cluster_stats()
-    print nodestats
+    nodestats = conn.nodes.stats()
     for nodename in nodestats['nodes']:
         if sys.argv[1] in nodestats['nodes'][nodename]['name']:
             if sys.argv[2] in indexingkeys:
