@@ -3,8 +3,10 @@
 # Created by Aaron Mildenstein on 19 SEP 2012
 # Switchted from pyes to Elasticsearch for better Health Monitoring by Marcel Alburg on 17 JUN 2014
 
-
 from elasticsearch import Elasticsearch
+
+import sys
+import json
 
 # Define the fail message
 def zbx_fail():
@@ -88,7 +90,7 @@ if sys.argv[1] == 'cluster':
 elif sys.argv[1] == 'service':
     if sys.argv[2] == 'status':
         try:
-            conn.status()
+            conn.cluster.stats()
             returnval = 1
         except Exception, e:
             returnval = 0
