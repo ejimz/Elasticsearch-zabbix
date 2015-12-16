@@ -32,8 +32,10 @@ if len(sys.argv) < 3:
 try:
     conn = ES('localhost:9200',timeout=25,default_indices=[''])
 except Exception, e:
-    zbx_fail()
-
+    if sys.argv[1] == 'cluster' and sys.argv[2] == 'status':
+        returnval = 2
+    else:
+        zbx_fail()
 
 if sys.argv[1] == 'cluster':
     if sys.argv[2] in clusterkeys:
@@ -62,12 +64,18 @@ if sys.argv[1] == 'cluster':
         try:
             escluster = managers.Cluster(conn)
         except Exception, e:
-            zbx_fail()
+            if sys.argv[2] == 'status':
+                returnval = "red"
+            else:
+                zbx_fail()
         # Try to get a value to match the key provided
         try:
             returnval = escluster.health()[sys.argv[2]]
         except Exception, e:
-            zbx_fail()
+            if sys.argv[2] == 'status':
+                returnval = "red"
+            else:
+                zbx_fail()
         # If the key is "status" then we need to map that to an integer
         if sys.argv[2] == 'status':
             if returnval == 'green':
