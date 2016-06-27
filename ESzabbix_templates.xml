@@ -137,9 +137,7 @@
                             <name>ES Cluster</name>
                         </application>
                     </applications>
-                    <valuemap>
-                        <name>ES Cluster State</name>
-                    </valuemap>
+                    <valuemap/>
                 </item>
                 <item>
                     <name>Number of active primary shards</name>

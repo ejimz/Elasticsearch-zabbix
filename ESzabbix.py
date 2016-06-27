@@ -39,7 +39,7 @@ except Exception, e:
 
 if sys.argv[1] == 'cluster':
     if sys.argv[2] in clusterkeys:
-        nodestats = conn.cluster_stats()
+        nodestats = conn.cluster.node_stats()
         subtotal = 0
         for nodename in nodestats['nodes']:
             if sys.argv[2] in indexingkeys:
@@ -91,15 +91,14 @@ if sys.argv[1] == 'cluster':
 elif sys.argv[1] == 'service':
     if sys.argv[2] == 'status':
         try:
-            conn.status()
+            conn.indices.status()
             returnval = 1
         except Exception, e:
             returnval = 0
 
 else: # Not clusterwide, check the next arg
 
-    nodestats = conn.cluster_stats()
-    print nodestats
+    nodestats = conn.cluster.node_stats()
     for nodename in nodestats['nodes']:
         if sys.argv[1] in nodestats['nodes'][nodename]['name']:
             if sys.argv[2] in indexingkeys:
@@ -112,8 +111,6 @@ else: # Not clusterwide, check the next arg
                 stats = nodestats['nodes'][nodename]['indices']['docs']
             elif sys.argv[2] in searchkeys:
                 stats = nodestats['nodes'][nodename]['indices']['search']
-            elif sys.argv[2] in cachekeys:
-                stats = nodestats['nodes'][nodename]['indices']['cache']
             try:
                 returnval = stats[sys.argv[2]]
             except Exception, e:
