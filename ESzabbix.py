@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 
 # Created by Aaron Mildenstein on 19 SEP 2012
+# Switchted from pyes to Elasticsearch for better Health Monitoring by Marcel Alburg on 17 JUN 2014
 
-from pyes import *
+from elasticsearch import Elasticsearch
+
 import sys
+import json
 
 # Define the fail message
 def zbx_fail():
@@ -30,30 +33,32 @@ if len(sys.argv) < 3:
 
 # Try to establish a connection to elasticsearch
 try:
-    conn = ES('localhost:9200',timeout=25,default_indices=[''])
+    conn = Elasticsearch('localhost:9200', sniff_on_start=False)
 except Exception, e:
-    if sys.argv[1] == 'cluster' and sys.argv[2] == 'status':
-        returnval = 2
-    else:
-        zbx_fail()
+    
+    zbx_fail()
 
 if sys.argv[1] == 'cluster':
     if sys.argv[2] in clusterkeys:
-        nodestats = conn.cluster.node_stats()
+        nodestats = conn.cluster.stats()
         subtotal = 0
         for nodename in nodestats['nodes']:
-            if sys.argv[2] in indexingkeys:
-                indexstats = nodestats['nodes'][nodename]['indices']['indexing']
-            elif sys.argv[2] in storekeys:
-                indexstats = nodestats['nodes'][nodename]['indices']['store']
-            elif sys.argv[2] in getkeys:
-                indexstats = nodestats['nodes'][nodename]['indices']['get']
-            elif sys.argv[2] in docskeys:
-                indexstats = nodestats['nodes'][nodename]['indices']['docs']
-            elif sys.argv[2] in searchkeys:
-                indexstats = nodestats['nodes'][nodename]['indices']['search']
             try:
-                subtotal += indexstats[sys.argv[2]]
+		    if sys.argv[2] in indexingkeys:
+			indexstats = nodestats['nodes'][nodename]['indices']['indexing']
+		    elif sys.argv[2] in storekeys:
+			indexstats = nodestats['nodes'][nodename]['indices']['store']
+		    elif sys.argv[2] in getkeys:
+			indexstats = nodestats['nodes'][nodename]['indices']['get']
+		    elif sys.argv[2] in docskeys:
+			indexstats = nodestats['nodes'][nodename]['indices']['docs']
+		    elif sys.argv[2] in searchkeys:
+			indexstats = nodestats['nodes'][nodename]['indices']['search']
+            except Exception, e:
+                pass
+            try:
+		if sys.argv[2] in indexstats:
+			subtotal += indexstats[sys.argv[2]]
             except Exception, e:
                 pass
         returnval = subtotal
@@ -62,7 +67,7 @@ if sys.argv[1] == 'cluster':
     else:
         # Try to pull the managers object data
         try:
-            escluster = managers.Cluster(conn)
+            escluster = conn.cluster
         except Exception, e:
             if sys.argv[2] == 'status':
                 returnval = "red"
@@ -91,14 +96,13 @@ if sys.argv[1] == 'cluster':
 elif sys.argv[1] == 'service':
     if sys.argv[2] == 'status':
         try:
-            conn.indices.status()
+            conn.cluster.stats()
             returnval = 1
         except Exception, e:
             returnval = 0
 
 else: # Not clusterwide, check the next arg
-
-    nodestats = conn.cluster.node_stats()
+    nodestats = conn.nodes.stats()
     for nodename in nodestats['nodes']:
         if sys.argv[1] in nodestats['nodes'][nodename]['name']:
             if sys.argv[2] in indexingkeys:
