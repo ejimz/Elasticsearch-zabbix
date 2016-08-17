@@ -526,7 +526,7 @@
                     <snmp_community/>
                     <multiplier>0</multiplier>
                     <snmp_oid/>
-                    <key>ESzabbix[{$HOSTNAME},field_size_in_bytes]</key>
+                    <key>ESzabbix[{$NODENAME},field_size_in_bytes]</key>
                     <delay>60</delay>
                     <history>30</history>
                     <trends>365</trends>
@@ -569,7 +569,7 @@
                     <snmp_community/>
                     <multiplier>0</multiplier>
                     <snmp_oid/>
-                    <key>ESzabbix[{$HOSTNAME},filter_size_in_bytes]</key>
+                    <key>ESzabbix[{$NODENAME},filter_size_in_bytes]</key>
                     <delay>60</delay>
                     <history>30</history>
                     <trends>365</trends>
@@ -612,7 +612,7 @@
                     <snmp_community/>
                     <multiplier>0</multiplier>
                     <snmp_oid/>
-                    <key>ESzabbix[{$HOSTNAME},index_total]</key>
+                    <key>ESzabbix[{$NODENAME},index_total]</key>
                     <delay>60</delay>
                     <history>30</history>
                     <trends>365</trends>
@@ -655,7 +655,7 @@
                     <snmp_community/>
                     <multiplier>0</multiplier>
                     <snmp_oid/>
-                    <key>ESzabbix[{$HOSTNAME},size_in_bytes]</key>
+                    <key>ESzabbix[{$NODENAME},size_in_bytes]</key>
                     <delay>60</delay>
                     <history>30</history>
                     <trends>365</trends>
