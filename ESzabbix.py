@@ -19,7 +19,8 @@ docskeys = ['count', 'deleted']
 indexingkeys = ['delete_time_in_millis', 'index_total', 'index_current', 'delete_total', 'index_time_in_millis', 'delete_current']
 storekeys = ['size_in_bytes', 'throttle_time_in_millis']
 cachekeys = ['filter_size_in_bytes', 'field_size_in_bytes', 'field_evictions']
-clusterkeys = searchkeys + getkeys + docskeys + indexingkeys + storekeys
+clusterkeys_direct = docskeys + storekeys
+clusterkeys_indirect = searchkeys + getkeys + indexingkeys 
 returnval = None
 
 # __main__
@@ -37,21 +38,24 @@ try:
 except Exception, e:
     
     zbx_fail()
-
+import pprint
 if sys.argv[1] == 'cluster':
-    if sys.argv[2] in clusterkeys:
+    if sys.argv[2] in clusterkeys_direct:
         nodestats = conn.cluster.stats()
+        if sys.argv[2] in docskeys:
+               returnval = nodestats['indices']['docs'][sys.argv[2]]
+        elif sys.argv[2] in storekeys:
+               returnval = nodestats['indices']['store'][sys.argv[2]]
+    elif sys.argv[2] in clusterkeys_indirect:
+        nodestats = conn.cluster.stats()
+        pprint.pprint(nodestats)
         subtotal = 0
-        for nodename in nodestats['nodes']:
+        for nodename in conn.nodes.info()['nodes']:
             try:
 		    if sys.argv[2] in indexingkeys:
 			indexstats = nodestats['nodes'][nodename]['indices']['indexing']
-		    elif sys.argv[2] in storekeys:
-			indexstats = nodestats['nodes'][nodename]['indices']['store']
 		    elif sys.argv[2] in getkeys:
 			indexstats = nodestats['nodes'][nodename]['indices']['get']
-		    elif sys.argv[2] in docskeys:
-			indexstats = nodestats['nodes'][nodename]['indices']['docs']
 		    elif sys.argv[2] in searchkeys:
 			indexstats = nodestats['nodes'][nodename]['indices']['search']
             except Exception, e:
@@ -62,7 +66,6 @@ if sys.argv[1] == 'cluster':
             except Exception, e:
                 pass
         returnval = subtotal
-
 
     else:
         # Try to pull the managers object data
@@ -129,4 +132,3 @@ else:
     print returnval
 
 # End
-
