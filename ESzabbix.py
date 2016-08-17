@@ -2,6 +2,7 @@
 
 # Created by Aaron Mildenstein on 19 SEP 2012
 # Switchted from pyes to Elasticsearch for better Health Monitoring by Marcel Alburg on 17 JUN 2014
+# Adjusted for ELK 2.3 by Javier Barroso on 17 AUG 2016
 
 from elasticsearch import Elasticsearch
 
