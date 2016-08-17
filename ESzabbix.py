@@ -39,7 +39,6 @@ try:
 except Exception, e:
     
     zbx_fail()
-import pprint
 if sys.argv[1] == 'cluster':
     if sys.argv[2] in clusterkeys_direct:
         nodestats = conn.cluster.stats()
@@ -49,7 +48,6 @@ if sys.argv[1] == 'cluster':
                returnval = nodestats['indices']['store'][sys.argv[2]]
     elif sys.argv[2] in clusterkeys_indirect:
         nodestats = conn.cluster.stats()
-        pprint.pprint(nodestats)
         subtotal = 0
         for nodename in conn.nodes.info()['nodes']:
             try:
