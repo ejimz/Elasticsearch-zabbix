@@ -8,11 +8,25 @@ from elasticsearch import Elasticsearch
 
 import sys
 import json
+import shelve
+import os
+import time
 
 # Define the fail message
 def zbx_fail():
     print "ZBX_NOTSUPPORTED"
     sys.exit(2)
+
+def use_cache(file):
+    if not os.access(file,os.F_OK):
+        return False
+    now = int(time.time())
+    file_modified = int(os.stat(file).st_mtime)
+    if now - file_modified < 60:
+       return True
+    else:
+       return False
+    
     
 searchkeys = ['query_total', 'fetch_time_in_millis', 'fetch_total', 'fetch_time', 'query_current', 'fetch_current', 'query_time_in_millis']
 getkeys = ['missing_total', 'exists_total', 'current', 'time_in_millis', 'missing_time_in_millis', 'exists_time_in_millis', 'total']
@@ -23,6 +37,15 @@ cachekeys = ['filter_size_in_bytes', 'field_size_in_bytes', 'field_evictions']
 clusterkeys_direct = docskeys + storekeys
 clusterkeys_indirect = searchkeys + getkeys + indexingkeys 
 returnval = None
+conn = None
+clustercache_file = "/tmp/clusterstats.cache"
+nodescache_file = "/tmp/nodestats.cache"
+lock_file="/tmp/ESzabbix.lock"
+
+# Waiting to somebody write the cache
+while os.access(lock_file,os.F_OK):
+    time.sleep(1)
+
 
 # __main__
 
@@ -37,17 +60,32 @@ if len(sys.argv) < 3:
 try:
     conn = Elasticsearch('localhost:9200', sniff_on_start=False)
 except Exception, e:
-    
     zbx_fail()
+
 if sys.argv[1] == 'cluster':
+    nodestats = None
+    if use_cache(clustercache_file):
+        nodestats = shelve.open(clustercache_file)
+        nodestats = nodestats['stats']
+    else:
+        lock=open (lock_file, "w")
+        try:
+            nodestats = conn.cluster.stats()
+            shelf = shelve.open(clustercache_file)
+            shelf['stats']=nodestats
+            shelf.close()
+            lock.close()
+        except Exception, e:
+            if os.access(lock_file, os.F_OK):
+                os.remove(lock_file)
+            zbx_fail()
+        os.remove(lock_file)
     if sys.argv[2] in clusterkeys_direct:
-        nodestats = conn.cluster.stats()
         if sys.argv[2] in docskeys:
                returnval = nodestats['indices']['docs'][sys.argv[2]]
         elif sys.argv[2] in storekeys:
                returnval = nodestats['indices']['store'][sys.argv[2]]
     elif sys.argv[2] in clusterkeys_indirect:
-        nodestats = conn.cluster.stats()
         subtotal = 0
         for nodename in conn.nodes.info()['nodes']:
             try:
@@ -97,15 +135,31 @@ if sys.argv[1] == 'cluster':
 # Mod to check if ES service is up
 elif sys.argv[1] == 'service':
     if sys.argv[2] == 'status':
-        try:
-            conn.cluster.stats()
+        if conn.ping():
             returnval = 1
-        except Exception, e:
+        else:
             returnval = 0
 
 else: # Not clusterwide, check the next arg
-    nodestats = conn.nodes.stats()
-    for nodename in nodestats['nodes']:
+    nodestats = None
+    if use_cache(nodescache_file):
+        nodestats = shelve.open(nodescache_file)
+        nodestats = nodestats['stats']
+    else:
+        lock=open (lock_file, "w")
+        try:
+            nodestats = conn.nodes.stats()
+            shelf = shelve.open(nodescache_file)
+            shelf['stats']=nodestats
+            shelf.close()
+            lock.close()
+        except Exception, e:
+            if os.access(lock_file, os.F_OK):
+                os.remove(lock_file)
+            zbx_fail()
+        os.remove(lock_file)
+
+    for nodename in conn.nodes.info()['nodes']:
         if sys.argv[1] in nodestats['nodes'][nodename]['name']:
             if sys.argv[2] in indexingkeys:
                 stats = nodestats['nodes'][nodename]['indices']['indexing']
