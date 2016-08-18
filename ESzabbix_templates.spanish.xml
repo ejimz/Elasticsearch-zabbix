@@ -466,16 +466,19 @@
                 </group>
             </groups>
             <applications>
-                <application>
+<!--
+	     	<application>
                     <name>Caché ES</name>
-                </application>
+	     	</application>
+-->
                 <application>
                     <name>Nodo ES</name>
                 </application>
             </applications>
             <items>
-                <item>
-                    <name>Nodo - Tamaño del campo caché</name>
+<!--                
+		<item>
+                    <name>Nodo - Tamaño del campo Caché</name>
                     <type>7</type>
                     <snmp_community/>
                     <multiplier>0</multiplier>
@@ -590,7 +593,8 @@
                         </application>
                     </applications>
                     <valuemap/>
-                </item>
+	    	</item>
+-->
                 <item>
                     <name>Nodo - Entradas indexadas por segundos</name>
                     <type>7</type>

@@ -466,15 +466,17 @@
                 </group>
             </groups>
             <applications>
+<!--                
                 <application>
                     <name>ES Cache</name>
                 </application>
+-->
                 <application>
                     <name>ES Node</name>
                 </application>
             </applications>
             <items>
-                <item>
+ <!--                <item>
                     <name>Node Field Cache Size</name>
                     <type>7</type>
                     <snmp_community/>
@@ -591,6 +593,7 @@
                     </applications>
                     <valuemap/>
                 </item>
+-->
                 <item>
                     <name>Records indexed per second</name>
                     <type>7</type>

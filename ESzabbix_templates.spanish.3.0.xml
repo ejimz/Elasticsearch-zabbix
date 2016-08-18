@@ -512,16 +512,19 @@
                 </group>
             </groups>
             <applications>
+<!--
                 <application>
                     <name>Caché ES</name>
                 </application>
+-->
                 <application>
                     <name>Nodo ES</name>
                 </application>
             </applications>
             <items>
+<!--
                 <item>
-                    <name>Nodo - Tamaño del campo caché</name>
+                    <name>Nodo - Tamaño del campo Caché</name>
                     <type>7</type>
                     <snmp_community/>
                     <multiplier>0</multiplier>
@@ -649,6 +652,7 @@
                     <valuemap/>
                     <logtimefmt/>
                 </item>
+-->
                 <item>
                     <name>Nodo - Tamaño de almacenamiento</name>
                     <type>7</type>
