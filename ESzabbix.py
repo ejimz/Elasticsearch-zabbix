@@ -38,9 +38,10 @@ clusterkeys_direct = docskeys + storekeys
 clusterkeys_indirect = searchkeys + getkeys + indexingkeys 
 returnval = None
 conn = None
-clustercache_file = "/tmp/clusterstats.cache"
-nodescache_file = "/tmp/nodestats.cache"
-lock_file="/tmp/ESzabbix.lock"
+user=str(os.getuid())
+clustercache_file = "/tmp/clusterstats.cache." + user
+nodescache_file = "/tmp/nodestats.cache." + user
+lock_file="/tmp/ESzabbix.lock." + user
 
 # Waiting to somebody write the cache
 while os.access(lock_file,os.F_OK):
