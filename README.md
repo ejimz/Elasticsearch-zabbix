@@ -49,6 +49,7 @@ There are triggers assigned for the cluster state:
 
 
 You will likely want to assign a value mapping for the ElasticSearch Cluster Status item.
+On Zabbix 3.0 it can be incrusted on export templates files
 
 In any event, the current list of included items is:
 
