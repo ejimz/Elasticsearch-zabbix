@@ -11,6 +11,11 @@ These are made available by me under an Apache 2.0 license.
 
 http://www.apache.org/licenses/LICENSE-2.0.html
 
+Contributing
+=============
+
+Feel free to add improvements, just send me your pull request :D
+
 
 How it works
 =============
